@@ -2,20 +2,24 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Neon Globe – Final Clean</title>
+  <title>Neon Globe – Final Stable</title>
   <style>
     body {
       margin: 0;
       background: black;
       overflow: hidden;
+      cursor: grab;
+    }
+    body:active {
+      cursor: grabbing;
     }
   </style>
 </head>
 <body>
 
-<script type="module">
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js";
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 
+<script>
 /* ================= SCENE ================= */
 const scene = new THREE.Scene();
 
@@ -43,7 +47,7 @@ const loader = new THREE.TextureLoader();
 const earthTexture = loader.load("world_map.png");
 earthTexture.colorSpace = THREE.SRGBColorSpace;
 
-/* ================= EARTH (MAIN MAP) ================= */
+/* ================= EARTH ================= */
 const earth = new THREE.Mesh(
   new THREE.SphereGeometry(1, 64, 64),
   new THREE.MeshStandardMaterial({
@@ -70,12 +74,47 @@ const landGlow = new THREE.Mesh(
 );
 scene.add(landGlow);
 
+/* ================= MANUAL MOUSE ROTATION ================= */
+let isDragging = false;
+let previousMousePosition = { x: 0, y: 0 };
+
+document.addEventListener("mousedown", (e) => {
+  isDragging = true;
+  previousMousePosition.x = e.clientX;
+  previousMousePosition.y = e.clientY;
+});
+
+document.addEventListener("mouseup", () => {
+  isDragging = false;
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+
+  const deltaMove = {
+    x: e.clientX - previousMousePosition.x,
+    y: e.clientY - previousMousePosition.y
+  };
+
+  const rotationSpeed = 0.005;
+
+  earth.rotation.y += deltaMove.x * rotationSpeed;
+  earth.rotation.x += deltaMove.y * rotationSpeed;
+
+  landGlow.rotation.y = earth.rotation.y;
+  landGlow.rotation.x = earth.rotation.x;
+
+  previousMousePosition.x = e.clientX;
+  previousMousePosition.y = e.clientY;
+});
+
 /* ================= ANIMATION ================= */
 function animate() {
   requestAnimationFrame(animate);
 
-  earth.rotation.y += 0.002;
-  landGlow.rotation.y += 0.002;
+  // auto slow rotation
+  earth.rotation.y += 0.009;
+  landGlow.rotation.y = earth.rotation.y;
 
   renderer.render(scene, camera);
 }
