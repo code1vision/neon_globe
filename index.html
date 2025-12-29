@@ -2,9 +2,13 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Neon Globe – Fixed</title>
+  <title>Neon Globe – Final Clean</title>
   <style>
-    body { margin:0; background:black; overflow:hidden; }
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
@@ -25,7 +29,7 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.z = 3;
 
 /* ================= RENDERER ================= */
-const renderer = new THREE.WebGLRenderer({ antialias:true });
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -39,26 +43,24 @@ const loader = new THREE.TextureLoader();
 const earthTexture = loader.load("world_map.png");
 earthTexture.colorSpace = THREE.SRGBColorSpace;
 
-/* ================= EARTH (MAIN) ================= */
+/* ================= EARTH (MAIN MAP) ================= */
 const earth = new THREE.Mesh(
   new THREE.SphereGeometry(1, 64, 64),
   new THREE.MeshStandardMaterial({
     map: earthTexture,
-    color: 0xffffff,          // ❗ no cyan wash
-    emissive: 0x001f22,       // very subtle glow
+    color: 0xffffff,
+    emissive: 0x001f22,
     emissiveIntensity: 0.1,
     roughness: 1
   })
 );
 scene.add(earth);
-/* ================= CONTINENT GLOW ================= */
-const landGlowTexture = earthTexture.clone();
-landGlowTexture.needsUpdate = true;
 
+/* ================= CONTINENT NEON GLOW ================= */
 const landGlow = new THREE.Mesh(
   new THREE.SphereGeometry(1.02, 64, 64),
   new THREE.MeshBasicMaterial({
-    map: landGlowTexture,
+    map: earthTexture,
     color: 0x00ffff,
     transparent: true,
     opacity: 0.45,
@@ -68,60 +70,15 @@ const landGlow = new THREE.Mesh(
 );
 scene.add(landGlow);
 
-/* ================= GRID (SUBTLE) ================= */
-const grid = new THREE.Mesh(
-  new THREE.SphereGeometry(1.01, 64, 64),
-  new THREE.MeshBasicMaterial({
-    color: 0x00ffff,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.0              // 🔥 very low
-  })
-);
-scene.add(grid);
-
-/* ================= EDGE GLOW (NOT FULL COVER) ================= */
-const glow = new THREE.Mesh(
-  new THREE.SphereGeometry(1.08, 64, 64),
-  new THREE.MeshBasicMaterial({
-    color: 0x00ffff,
-    transparent: true,
-    opacity: 0.12,
-    side: THREE.BackSide       // 🔥 KEY FIX
-  })
-);
-scene.add(glow);
-
-/* ================= NEON RINGS ================= */
-function ring(r){
-  const ring = new THREE.Mesh(
-    new THREE.RingGeometry(r, r + 0.015, 256),
-    new THREE.MeshBasicMaterial({
-      color: 0x00ffff,
-      transparent: true,
-      opacity: 0.9,
-      side: THREE.DoubleSide
-    })
-  );
-  ring.rotation.x = Math.PI/2;
-  scene.add(ring);
-}
-ring(1.3);
-ring(1.5);
-
 /* ================= ANIMATION ================= */
-function animate(){
+function animate() {
   requestAnimationFrame(animate);
 
   earth.rotation.y += 0.002;
-  grid.rotation.y += 0.002;
-  glow.rotation.y += 0.001;
-  landGlow.rotation.y += 0.002;   // 🔥 sync glow
+  landGlow.rotation.y += 0.002;
 
   renderer.render(scene, camera);
 }
-animate();
-
 animate();
 
 /* ================= RESIZE ================= */
