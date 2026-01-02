@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Neon Circle with Globe</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #050505;
+}
+
+/* responsive */
+.circle-container {
+    position: relative;
+    width: clamp(320px, 70vmin, 600px);
+    height: clamp(320px, 70vmin, 600px);
+}
+
+/* OUTER RING */
+.outer-circle {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid #00ffff;
+    box-shadow:
+        0 0 20px #00ffff,
+        inset 0 0 20px #00ffff;
+    animation: pulse 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* INNER RING */
+.inner-circle {
+    position: absolute;
+    inset: 28px;
+    border-radius: 50%;
+    border: 1px solid #00ffff;
+    box-shadow:
+        0 0 10px #00ffff,
+        inset 0 0 30px #00ffff;
+    overflow: hidden;
+}
+
+/* GLOBE */
+.globe-frame {
+    position: absolute;
+    inset: 28px;
+    width: calc(100% - 56px);
+    height: calc(100% - 56px);
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+}
+
+/* smooth ring pulse */
+@keyframes pulse {
+    0%,100% {
+        box-shadow:
+            0 0 20px #00ffff,
+            inset 0 0 20px #00ffff;
+    }
+    50% {
+        box-shadow:
+            0 0 40px #00ffff,
+            inset 0 0 35px #00ffff;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="circle-container">
+    <div class="outer-circle"></div>
+    <div class="inner-circle">
+        <iframe src="Earth_glob.html" class="globe-frame"></iframe>
+    </div>
+</div>
+
+</body>
+</html>
